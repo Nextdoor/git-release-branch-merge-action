@@ -1,4 +1,4 @@
-name: Git Release Branch Merge Action
+name: Helm Create Tag from Version Action
 
 description: |-
   Automates the process of pushing merge commits into a "release" branch from
@@ -17,58 +17,23 @@ inputs:
     required: false
 
   verbose:
-    description: |-
+    description: >-
       Should the script output all of the commands (set -x) while its running or not?
     default: false
     required: false
 
-  commit_message:
-    description: Commit message
-    required: false
-    default: Automatic Merge
-
-  release_branch:
-    description: Release branch to merge into
+  chart_dir:
+    description: >-
+      The path to where the chart lives (specifically the directory
+      that holds the Chart.yaml file).
+    default: chart
     required: true
 
-  commit_options:
-    description: Commit options (eg. --no-verify)
-    required: false
-    default: ''
-
-  commit_user_name:
-    description: Name used for the commit user
-    required: false
-    default: GitHub Actions
-
-  commit_user_email:
-    description: Email address used for the commit user
-    required: false
-    default: actions@github.com
-
-  commit_author:
-    description: Value used for the commit author. Defaults to the username of whoever triggered this workflow run.
-    required: false
-    default: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-
-  push_options:
-    description: Push options (eg. --force)
-    required: false
-    default: ''
-
+  create_release:
+    description: Whether or not to also create a Github Release for this tag?
+    default: true
+    required: true
 
 runs:
-  using: composite
-  steps:
-    - shell: bash
-      run: $GITHUB_ACTION_PATH/entrypoint.sh
-      env:
-        INPUT_DRY: ${{ inputs.dry }}
-        INPUT_VERBOSE: ${{ inputs.verbose }}
-        INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
-        INPUT_RELEASE_BRANCH: ${{ inputs.release_branch }}
-        INPUT_COMMIT_OPTIONS: ${{ inputs.commit_options }}
-        INPUT_COMMIT_USER_NAME: ${{ inputs.commit_user_name }}
-        INPUT_COMMIT_AUTHOR: ${{ inputs.commit_author }}
-        INPUT_COMMIT_USER_EMAIL: ${{ inputs.commit_user_email }}
-        INPUT_PUSH_OPTIONS: ${{ inputs.push_options }}
+  using: docker
+  image: Dockerfile
